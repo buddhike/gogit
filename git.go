@@ -107,6 +107,17 @@ func (c CLI) Commit(message string) error {
 	return err
 }
 
+// ConfigureUser setup identity for commits etc
+func (c CLI) ConfigureUser(username, email string) error {
+	_, err := c.runCommand("config", "user.name", username, "user.email", email)
+	return err
+}
+
+// Log returns the commit log
+func (c CLI) Log() ([]string, error) {
+	return c.runCommand("log", "--pretty=\"%H\"")
+}
+
 // Checkout checks out the specified commit sha
 func (c CLI) Checkout(sha string) error {
 	return nil

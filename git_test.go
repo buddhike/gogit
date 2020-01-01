@@ -63,6 +63,7 @@ func TestCommit(t *testing.T) {
 	c := NewCLI(DataPath)
 	err := c.Init()
 	assert.NoError(t, err)
+	assert.NoError(t, c.ConfigureUser("barry", "barry@starlabs.org"))
 	assert.NoError(t, ioutil.WriteFile(path.Join(DataPath, "readme.md"), []byte("#hey"), 0744))
 	assert.NoError(t, c.IndexAll())
 	assert.NoError(t, c.Commit("first"))
