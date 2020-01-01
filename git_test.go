@@ -57,3 +57,16 @@ func TestIndexAll(t *testing.T) {
 	assert.Equal(t, "readme.md", s[0].Path)
 	assert.Equal(t, StatusAdded, s[0].Status)
 }
+
+func TestCommit(t *testing.T) {
+	setup()
+	c := NewCLI(DataPath)
+	err := c.Init()
+	assert.NoError(t, err)
+	assert.NoError(t, ioutil.WriteFile(path.Join(DataPath, "readme.md"), []byte("#hey"), 0744))
+	assert.NoError(t, c.IndexAll())
+	assert.NoError(t, c.Commit("first"))
+	s, err := c.Status()
+	assert.NoError(t, err)
+	assert.Empty(t, s)
+}

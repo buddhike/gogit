@@ -101,6 +101,12 @@ func (c CLI) IndexAll() error {
 	return err
 }
 
+// Commit creates a commit with specified message
+func (c CLI) Commit(message string) error {
+	_, err := c.runCommand("commit", "-m", message)
+	return err
+}
+
 // Checkout checks out the specified commit sha
 func (c CLI) Checkout(sha string) error {
 	return nil
