@@ -117,6 +117,15 @@ func (c CLI) ConfigureUser(username, email string) error {
 	return err
 }
 
+// MergeBase returns the merge base of two commits
+func (c CLI) MergeBase(first, second string) (string, error) {
+	r, err := c.runCommand("merge-base", first, second)
+	if err != nil {
+		return "", err
+	}
+	return r[0], nil
+}
+
 // Log returns the commit log
 func (c CLI) Log() ([]string, error) {
 	return c.runCommand("log", "--pretty=\"%H\"")
