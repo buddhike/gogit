@@ -71,3 +71,26 @@ func TestCommit(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Empty(t, s)
 }
+
+func TestLog(t *testing.T) {
+	setup()
+	c := NewCLI(DataPath)
+	err := c.Init()
+	assert.NoError(t, err)
+	assert.NoError(t, c.ConfigureUser("barry", "barry@starlabs.org"))
+	assert.NoError(t, ioutil.WriteFile(path.Join(DataPath, "readme.md"), []byte("#hey"), 0744))
+	assert.NoError(t, c.IndexAll())
+	assert.NoError(t, c.Commit("first"))
+
+	l, err := c.Log()
+	assert.NoError(t, err)
+	assert.Len(t, l, 1)
+
+	// Create the second commit
+	assert.NoError(t, ioutil.WriteFile(path.Join(DataPath, "readme.md"), []byte("#hey hey"), 0744))
+	assert.NoError(t, c.IndexAll())
+	assert.NoError(t, c.Commit("second"))
+	l, err = c.Log()
+	assert.NoError(t, err)
+	assert.Len(t, l, 2)
+}
