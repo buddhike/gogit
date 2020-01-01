@@ -109,7 +109,11 @@ func (c CLI) Commit(message string) error {
 
 // ConfigureUser setup identity for commits etc
 func (c CLI) ConfigureUser(username, email string) error {
-	_, err := c.runCommand("config", "user.name", username, "user.email", email)
+	_, err := c.runCommand("config", "--local", "user.name", username)
+	if err != nil {
+		return err
+	}
+	_, err = c.runCommand("config", "--local", "user.email", email)
 	return err
 }
 
