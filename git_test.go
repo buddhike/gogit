@@ -141,7 +141,8 @@ func TestDiff(t *testing.T) {
 	assert.NoError(t, c.IndexAll())
 	assert.NoError(t, c.Commit("first"))
 
-	assert.NoError(t, ioutil.WriteFile(path.Join(DataPath, "hello.md"), []byte("#hey"), 0744))
+	assert.NoError(t, os.Mkdir(path.Join(DataPath, "docs"), 0744))
+	assert.NoError(t, ioutil.WriteFile(path.Join(DataPath, "docs/hello.md"), []byte("#hey"), 0744))
 	assert.NoError(t, c.IndexAll())
 	assert.NoError(t, c.Commit("second"))
 
@@ -152,7 +153,7 @@ func TestDiff(t *testing.T) {
 	assert.NoError(t, err)
 
 	assert.Len(t, diff, 1)
-	assert.Equal(t, "hello.md", diff[0])
+	assert.Equal(t, "docs/hello.md", diff[0])
 }
 
 func TestBlob(t *testing.T) {

@@ -154,9 +154,9 @@ func (c CLI) Checkout(path string) error {
 	return err
 }
 
-// Diff returns the output of diff --name-only from..to command
+// Diff returns the output of diff-tree -r --no-commit-id --name-only <from> <to> command
 func (c CLI) Diff(from, to string) ([]string, error) {
-	return c.runCommand("diff", "--name-only", fmt.Sprintf("%s..%s", from, to))
+	return c.runCommand("diff-tree", "--no-commit-id", "-r", "--name-only", from, to)
 }
 
 // Blob returns the output of show <sha>:path
