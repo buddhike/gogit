@@ -117,6 +117,16 @@ func (c CLI) ConfigureUser(username, email string) error {
 	return err
 }
 
+// RevParse runs rev-parse command
+func (c CLI) RevParse(revisionOrPath string) (string, error) {
+	r, err := c.runCommand("rev-parse", revisionOrPath)
+	if err != nil {
+		return "", err
+	}
+
+	return r[0], nil
+}
+
 // MergeBase returns the merge base of two commits
 func (c CLI) MergeBase(first, second string) (string, error) {
 	r, err := c.runCommand("merge-base", first, second)

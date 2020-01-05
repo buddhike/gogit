@@ -94,3 +94,16 @@ func TestLog(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, l, 2)
 }
+
+func TestRevParse(t *testing.T) {
+	setup()
+	c := NewCLI(DataPath)
+	assert.NoError(t, c.Init())
+	assert.NoError(t, c.ConfigureUser("barry", "barry@starlabs.org"))
+	assert.NoError(t, ioutil.WriteFile(path.Join(DataPath, "readme.md"), []byte("#hey"), 0744))
+	assert.NoError(t, c.IndexAll())
+	assert.NoError(t, c.Commit("first"))
+	sha, err := c.RevParse("head")
+	assert.NoError(t, err)
+	assert.NotEmpty(t, sha)
+}
