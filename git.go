@@ -164,6 +164,11 @@ func (c CLI) Blob(sha, path string) (string, error) {
 	return c.runCommandAndReadOutputAsString("show", fmt.Sprintf("%s:%s", sha, path))
 }
 
+// LsTree returns the output of ls-tree -r --name-only <sha>
+func (c CLI) LsTree(sha string) ([]string, error) {
+	return c.runCommand("ls-tree", "--name-only", "-r", sha)
+}
+
 // runCommand implements the driver for running git with specified arguments
 // and parsing its output
 func (c CLI) runCommand(command string, arg ...string) ([]string, error) {
