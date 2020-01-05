@@ -107,3 +107,27 @@ func TestRevParse(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotEmpty(t, sha)
 }
+
+func TestCreateBranch(t *testing.T) {
+	setup()
+	c := NewCLI(DataPath)
+	assert.NoError(t, c.Init())
+	assert.NoError(t, c.ConfigureUser("barry", "barry@starlabs.org"))
+	assert.NoError(t, ioutil.WriteFile(path.Join(DataPath, "readme.md"), []byte("#hey"), 0744))
+	assert.NoError(t, c.IndexAll())
+	assert.NoError(t, c.Commit("first"))
+
+	assert.NoError(t, c.CreateBranch("topic"))
+	assert.NoError(t, ioutil.WriteFile(path.Join(DataPath, "readme.md"), []byte("#hey hey"), 0744))
+	assert.NoError(t, c.IndexAll())
+	assert.NoError(t, c.Commit("second"))
+
+	log, err := c.Log()
+	assert.NoError(t, err)
+	assert.Len(t, log, 2)
+
+	assert.NoError(t, c.Checkout("master"))
+	log, err = c.Log()
+	assert.NoError(t, err)
+	assert.Len(t, log, 1)
+}

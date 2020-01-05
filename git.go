@@ -127,6 +127,12 @@ func (c CLI) RevParse(revisionOrPath string) (string, error) {
 	return r[0], nil
 }
 
+// CreateBranch runs checkout -b <name> command
+func (c CLI) CreateBranch(name string) error {
+	_, err := c.runCommand("checkout", "-b", name)
+	return err
+}
+
 // MergeBase returns the merge base of two commits
 func (c CLI) MergeBase(first, second string) (string, error) {
 	r, err := c.runCommand("merge-base", first, second)
@@ -142,8 +148,9 @@ func (c CLI) Log() ([]string, error) {
 }
 
 // Checkout checks out the specified commit sha
-func (c CLI) Checkout(sha string) error {
-	return nil
+func (c CLI) Checkout(path string) error {
+	_, err := c.runCommand("checkout", path)
+	return err
 }
 
 // runCommand implements the driver for running git with specified arguments
