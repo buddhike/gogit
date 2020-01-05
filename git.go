@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"errors"
+	"fmt"
 	"os/exec"
 	"regexp"
 	"strings"
@@ -144,7 +145,7 @@ func (c CLI) MergeBase(first, second string) (string, error) {
 
 // Log returns the commit log
 func (c CLI) Log() ([]string, error) {
-	return c.runCommand("log", "--pretty=\"%H\"")
+	return c.runCommand("log", "--pretty=%H")
 }
 
 // Checkout checks out the specified commit sha
@@ -153,19 +154,35 @@ func (c CLI) Checkout(path string) error {
 	return err
 }
 
-// Diff returns the output of diff --name-only command
+// Diff returns the output of diff --name-only from..to command
 func (c CLI) Diff(from, to string) ([]string, error) {
-	return nil, errors.New("Not implemented")
+	return c.runCommand("diff", "--name-only", fmt.Sprintf("%s..%s", from, to))
 }
 
 // Blob returns the output of show <sha>:path
 func (c CLI) Blob(sha, path string) (string, error) {
-	return "", errors.New("Not implemented")
+	return c.runCommandAndReadOutputAsString("show", fmt.Sprintf("%s:%s", sha, path))
 }
 
 // runCommand implements the driver for running git with specified arguments
 // and parsing its output
 func (c CLI) runCommand(command string, arg ...string) ([]string, error) {
+	buf, err := c.runCommandAndReadOutputAsBytes(command, arg...)
+	if err != nil {
+		return nil, err
+	}
+	return readLines(buf)
+}
+
+func (c CLI) runCommandAndReadOutputAsString(command string, arg ...string) (string, error) {
+	buf, err := c.runCommandAndReadOutputAsBytes(command, arg...)
+	if err != nil {
+		return "", err
+	}
+	return string(buf), nil
+}
+
+func (c CLI) runCommandAndReadOutputAsBytes(command string, arg ...string) ([]byte, error) {
 	cmd := exec.Command("git", append([]string{command}, arg...)...)
 	cmd.Dir = c.path
 	stdout, err := cmd.Output()
@@ -182,7 +199,7 @@ func (c CLI) runCommand(command string, arg ...string) ([]string, error) {
 		return nil, errors.New(strings.Join(errorLines, ";"))
 	}
 
-	return readLines(stdout)
+	return stdout, nil
 }
 
 func readLines(buf []byte) ([]string, error) {

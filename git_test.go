@@ -131,3 +131,43 @@ func TestCreateBranch(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, log, 1)
 }
+
+func TestDiff(t *testing.T) {
+	setup()
+	c := NewCLI(DataPath)
+	assert.NoError(t, c.Init())
+	assert.NoError(t, c.ConfigureUser("barry", "barry@starlabs.org"))
+	assert.NoError(t, ioutil.WriteFile(path.Join(DataPath, "readme.md"), []byte("#hey"), 0744))
+	assert.NoError(t, c.IndexAll())
+	assert.NoError(t, c.Commit("first"))
+
+	assert.NoError(t, ioutil.WriteFile(path.Join(DataPath, "hello.md"), []byte("#hey"), 0744))
+	assert.NoError(t, c.IndexAll())
+	assert.NoError(t, c.Commit("second"))
+
+	log, err := c.Log()
+	assert.NoError(t, err)
+
+	diff, err := c.Diff(log[0], log[1])
+	assert.NoError(t, err)
+
+	assert.Len(t, diff, 1)
+	assert.Equal(t, "hello.md", diff[0])
+}
+
+func TestBlob(t *testing.T) {
+	setup()
+	c := NewCLI(DataPath)
+	assert.NoError(t, c.Init())
+	assert.NoError(t, c.ConfigureUser("barry", "barry@starlabs.org"))
+	assert.NoError(t, ioutil.WriteFile(path.Join(DataPath, "readme.md"), []byte("#hey"), 0744))
+	assert.NoError(t, c.IndexAll())
+	assert.NoError(t, c.Commit("first"))
+
+	log, err := c.Log()
+	assert.NoError(t, err)
+
+	content, err := c.Blob(log[0], "readme.md")
+	assert.NoError(t, err)
+	assert.Equal(t, "#hey", content)
+}
