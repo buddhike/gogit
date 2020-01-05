@@ -103,7 +103,7 @@ func TestRevParse(t *testing.T) {
 	assert.NoError(t, ioutil.WriteFile(path.Join(DataPath, "readme.md"), []byte("#hey"), 0744))
 	assert.NoError(t, c.IndexAll())
 	assert.NoError(t, c.Commit("first"))
-	sha, err := c.RevParse("head")
+	sha, err := c.RevParse("HEAD")
 	assert.NoError(t, err)
 	assert.NotEmpty(t, sha)
 }
