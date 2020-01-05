@@ -153,6 +153,16 @@ func (c CLI) Checkout(path string) error {
 	return err
 }
 
+// Diff returns the output of diff --name-only command
+func (c CLI) Diff(from, to string) ([]string, error) {
+	return nil, errors.New("Not implemented")
+}
+
+// Blob returns the output of show <sha>:path
+func (c CLI) Blob(sha, path string) (string, error) {
+	return "", errors.New("Not implemented")
+}
+
 // runCommand implements the driver for running git with specified arguments
 // and parsing its output
 func (c CLI) runCommand(command string, arg ...string) ([]string, error) {
